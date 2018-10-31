@@ -3,6 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
+#include <omp.h>
 
 #define SOURCE_FILE "sourceList.data"
 #define DESTINATION_FILE "sortedList.data"
@@ -48,7 +49,9 @@ int main(int argc, char *argv[]) {
 
 	blankline();
 
-	printlist(dataset);
+	if(PRINT_LIST==1){
+		printlist(dataset);
+	}
 	
 	printf("** Average value is \t%lf\n", getAverage(dataset, SIZE));
 	printf("** Minimum value is \t%lf\n", getMinValue(dataset, SIZE));
@@ -59,15 +62,15 @@ int main(int argc, char *argv[]) {
 	if(ALG==QUICKSORT){
 		printf(">* Performing quick sort\n");
 		
-		#pragma omp parallel
-		{
-			#pragma omp single
-			{
+		//#pragma omp parallel
+		//{
+			//#pragma omp single
+			//{
 				quickSort(dataset, 0, SIZE-1);
-			}
-		}
+			//}
+		//}
 
-		#pragma omp barrier
+		//#pragma omp barrier
 	}else{
 		printf(">* Performing insertion sort\n");
 		insertionSort(dataset, SIZE);
@@ -75,7 +78,9 @@ int main(int argc, char *argv[]) {
 
 	blankline();
 	
-	printlist(dataset);
+	if(PRINT_LIST==1){
+		printlist(dataset);
+	}
 
 	printf(">* Writing back dataset to file\n");
 	writeDatasetToFile(SIZE, dataset, DESTINATION_FILE);
@@ -259,12 +264,10 @@ void blankline(){
 }
 
 void printlist(float *dataset){
-	if(PRINT_LIST==1){
-		for(i=0; i<SIZE; i++){
-			printf("%lf\t", dataset[i]);
-		}
-
-		blankline();
-		blankline();
+	for(i=0; i<SIZE; i++){
+		printf("%lf\t", dataset[i]);
 	}
+
+	blankline();
+	blankline();
 }
