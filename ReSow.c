@@ -17,6 +17,7 @@ void loadDataFromFileToMemory(float *buffer, char *filename, int noOfItems);
 int writeDatasetToFile(int datasetSize, float *dataset, char *filename);
 void generateDataset(float *dataset, int datasetSize, int maxNumber);
 void quickSort(float *dataset, int low, int high);
+void insertionSort(float *dataset, int noOfItems);
 int partition(float *dataset, int low, int high);
 float getMinValue(float *dataset, int size);
 float getMaxValue(float *dataset, int size);
@@ -29,7 +30,7 @@ int main(int argc, char *argv[]) {
 	int i, SIZE = 5;
 
 	float dataset[SIZE];
-	//generateDataset(dataset, SIZE, 100);
+	generateDataset(dataset, SIZE, 100);
 
 	printf("\n%s\n", "Loading dataset from file");
 	loadDataFromFileToMemory(dataset, SOURCE_FILE,SIZE);
@@ -49,7 +50,8 @@ int main(int argc, char *argv[]) {
 
 	printf("\n");
 	printf("\n%s\n", "Sorted dataset");
-	quickSort(dataset, 0, SIZE-1);
+	//quickSort(dataset, 0, SIZE-1);
+	insertionSort(dataset, SIZE);
 	
 	for(i=0; i<SIZE; i++){
 		printf("%lf\t", dataset[i]);
@@ -76,21 +78,29 @@ float getAverage(float *dataset, int size){
 }
 
 float getMinValue(float *dataset, int size){
-	float tempList[size];
-	memcpy(tempList, dataset, (size * sizeof(float)) );
+	float min = dataset [0];
 
-	quickSort(tempList, 0, size-1);
+	for (int i = 1; i < size; ++i)
+	{
+		if(dataset[i]<min){
+			min = dataset[i];
+		}
+	}
 
-	return tempList[0];
+	return min;
 }
 
 float getMaxValue(float *dataset, int size){
-	float tempList[size];
-	memcpy(tempList, dataset, (size * sizeof(float)) );
+	float max = dataset [0];
 
-	quickSort(tempList, 0, size-1);
+	for (int i = 1; i < size; ++i)
+	{
+		if(dataset[i]>max){
+			max = dataset[i];
+		}
+	}
 
-	return tempList[size-1];
+	return max;
 }
 
 
@@ -164,5 +174,21 @@ void quickSort(float *dataset, int low, int high){
 		int pivot = partition(dataset, 0, high);
 		quickSort(dataset, low, pivot-1);
 		quickSort(dataset, pivot+1, high);
+	}
+}
+
+void insertionSort(float *dataset, int noOfItems){
+	int i, key, j;
+
+	for(i = 1; i<noOfItems; i++){
+		key = dataset[i];
+		j = i-1;
+
+		while(j>=0 && dataset[j]>key ){
+			dataset[j+1] = dataset[j];
+			j = j-1;
+		}
+
+		dataset[j+1] = key;
 	}
 }
