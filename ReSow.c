@@ -2,12 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <unistd.h>
 
 #define SOURCE_FILE "sourceList.data"
 #define DESTINATION_FILE "sortedList.data"
 #define WRITE "wb"
 #define READ "rb"
 #define APPEND "ab"
+#define QUICKSORT 1
+#define INSERTIONSORT 2
+#define GENERATE 1
+#define FROMFILE 2
 
 
 //Input: DataSetSize, BufferSize, DatasetFilename, OutputFilename
@@ -22,52 +27,98 @@ int partition(float *dataset, int low, int high);
 float getMinValue(float *dataset, int size);
 float getMaxValue(float *dataset, int size);
 float getAverage(float *dataset, int size);
+void readOptions(int *argc, char **argv);
+void printlist(float *dataset);
 void swap(float *a, float *b);
+void printHelpText();
+void blankline();
 
+int i, SIZE = 102400, ALG = 2, DATA_SOURCE = 1, PRINT_LIST = 1;
 
 int main(int argc, char *argv[]) {
-	printf("%s\n", "Creating dataset");
-	int i, SIZE = 5;
+	readOptions(&argc, argv);
 
 	float dataset[SIZE];
-	generateDataset(dataset, SIZE, 100);
 
-	printf("\n%s\n", "Loading dataset from file");
-	loadDataFromFileToMemory(dataset, SOURCE_FILE,SIZE);
-	printf("\n");
-	printf("%s\n", "Unsorted dataset");
+	blankline();
 
-	for(i=0; i<SIZE; i++){
-		printf("%lf\t", dataset[i]);
+	if(DATA_SOURCE == GENERATE){
+		printf(">* Creating dataset\n");
+		generateDataset(dataset, SIZE, 100);
+	}else{
+		printf(">* Loading dataset from file\n");
+		loadDataFromFileToMemory(dataset, SOURCE_FILE,SIZE);
 	}
 
-	printf("\n");
-	printf("\n");
+	blankline();
+
+	printlist(dataset);
 	
 	printf("** Average value is \t%lf\n", getAverage(dataset, SIZE));
 	printf("** Minimum value is \t%lf\n", getMinValue(dataset, SIZE));
 	printf("** Maximum value is \t%lf\n", getMaxValue(dataset, SIZE));
 
-	printf("\n");
-	printf("\n%s\n", "Sorted dataset");
-	//quickSort(dataset, 0, SIZE-1);
-	insertionSort(dataset, SIZE);
+	blankline();
 	
-	for(i=0; i<SIZE; i++){
-		printf("%lf\t", dataset[i]);
+	if(ALG==QUICKSORT){
+		printf(">* Performing quick sort\n");
+		quickSort(dataset, 0, SIZE-1);
+	}else{
+		printf(">* Performing insertion sort\n");
+		insertionSort(dataset, SIZE);
 	}
+
+	blankline();
 	
-	printf("\n");
-	printf("%s\n", "Writing back dataset to file");
+	printlist(dataset);
+
+	printf(">* Writing back dataset to file\n");
 	writeDatasetToFile(SIZE, dataset, DESTINATION_FILE);
 
-	printf("\n");
+	blankline();
 	return 0;
+}
+
+void readOptions(int *argc, char **argv){
+	int option;
+
+	while ((option = getopt (*argc, argv, "hn:a:d:p:")) != -1){
+		switch(option){
+			case 'h':
+				printHelpText();
+				break;
+			case 'n':
+				SIZE = atoi(optarg);
+				break;
+			case 'a':
+				ALG = atoi(optarg);
+				break;
+			case 'd':
+				DATA_SOURCE = atoi(optarg);
+			case 'p':
+				PRINT_LIST = atoi(optarg);
+				break;
+			default:
+				break;
+		}
+	}
+}
+
+void printHelpText(){
+	printf("\n");
+	printf("Welcome to ReSoW\n");
+	printf("Options include:\n");
+	printf("  -h 			 Get instructions.\n");
+	printf("  -d [ 1 | 2 ]	\t Set data source for the operation. Options include [1 = generate new dataset, 2 = load dataset from file]. Default is 1\n");
+	printf("  -p [ 1 | 2 ]	\t Prints the list. Options include [1 = print list, 2 = do not print list]. Default is 1\n");
+	printf("  -a [ 1 | 2 ]	\t Define the sorting algorithm to use. Options include [1 = QUICKSORT, 2 = INSERTIONSORT]. Default is 2\n");
+	printf("  -n <size>		 Indicates the size of the dataset to be used. Default is 102400\n");
+	printf("\n");
+	exit(3);
 }
 
 float getAverage(float *dataset, int size){
 	float total = 0.0;
-	int i;
 
 	for (i = 0; i < size; i++)
 	{
@@ -79,7 +130,6 @@ float getAverage(float *dataset, int size){
 
 float getMinValue(float *dataset, int size){
 	float min = dataset [0];
-	int i;
 
 	for (i = 1; i < size; ++i)
 	{
@@ -93,7 +143,6 @@ float getMinValue(float *dataset, int size){
 
 float getMaxValue(float *dataset, int size){
 	float max = dataset [0];
-	int i;
 
 	for (i = 1; i < size; ++i)
 	{
@@ -107,7 +156,6 @@ float getMaxValue(float *dataset, int size){
 
 
 void generateDataset(float *dataset, int datasetSize, int maxNumber){
-	int i;
 	time_t t;
 
 	srand((unsigned int)time(&t));
@@ -157,8 +205,9 @@ void swap(float *a, float *b)
 
 int partition(float *dataset, int low, int high){
 	int pivot = dataset[high];
-	int i = (low-1);
 	int j;
+
+	i = (low-1);
 
 	for(j = low; j <= high-1; j++){
 		if(dataset[j] <= pivot){
@@ -180,7 +229,8 @@ void quickSort(float *dataset, int low, int high){
 }
 
 void insertionSort(float *dataset, int noOfItems){
-	int i, key, j;
+	float key;
+	int j;
 
 	for(i = 1; i<noOfItems; i++){
 		key = dataset[i];
@@ -192,5 +242,20 @@ void insertionSort(float *dataset, int noOfItems){
 		}
 
 		dataset[j+1] = key;
+	}
+}
+
+void blankline(){
+	printf("\n");
+}
+
+void printlist(float *dataset){
+	if(PRINT_LIST==1){
+		for(i=0; i<SIZE; i++){
+			printf("%lf\t", dataset[i]);
+		}
+
+		blankline();
+		blankline();
 	}
 }
