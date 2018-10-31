@@ -79,8 +79,9 @@ float getAverage(float *dataset, int size){
 
 float getMinValue(float *dataset, int size){
 	float min = dataset [0];
+	int i;
 
-	for (int i = 1; i < size; ++i)
+	for (i = 1; i < size; ++i)
 	{
 		if(dataset[i]<min){
 			min = dataset[i];
@@ -92,8 +93,9 @@ float getMinValue(float *dataset, int size){
 
 float getMaxValue(float *dataset, int size){
 	float max = dataset [0];
+	int i;
 
-	for (int i = 1; i < size; ++i)
+	for (i = 1; i < size; ++i)
 	{
 		if(dataset[i]>max){
 			max = dataset[i];
