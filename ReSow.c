@@ -3,6 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
+#include <omp.h>
 
 #define SOURCE_FILE "sourceList.data"
 #define DESTINATION_FILE "sortedList.data"
@@ -62,7 +63,14 @@ int main(int argc, char *argv[]) {
 	
 	if(ALG==QUICKSORT){
 		printf(">* Performing quick sort\n");
-		quickSort(dataset, 0, SIZE-1);
+		
+		#pragma omp parallel
+		{
+			#pragma omp single
+			{
+				quickSort(dataset, 0, SIZE-1);
+			}
+		}
 	}else{
 		printf(">* Performing insertion sort\n");
 		insertionSort(dataset, SIZE);
@@ -223,7 +231,11 @@ int partition(float *dataset, int low, int high){
 void quickSort(float *dataset, int low, int high){
 	if(low < high){
 		int pivot = partition(dataset, low, high);
+
+		#pragma omp task
 		quickSort(dataset, low, pivot-1);
+
+		#pragma omp task
 		quickSort(dataset, pivot+1, high);
 	}
 }
