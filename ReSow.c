@@ -3,7 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
-#include <omp.h>
+//#include <omp.h>
 
 #define SOURCE_FILE "sourceList.data"
 #define DESTINATION_FILE "sortedList.data"
