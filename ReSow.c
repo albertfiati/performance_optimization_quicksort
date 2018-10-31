@@ -219,6 +219,7 @@ int partition(float *dataset, int low, int high){
 
 	i = (low-1);
 
+	#pragma omp parallel for
 	for(j = low; j <= high-1; j++){
 		if(dataset[j] <= pivot){
 			i++;
@@ -234,11 +235,14 @@ void quickSort(float *dataset, int low, int high){
 	if(low < high){
 		int pivot = partition(dataset, low, high);
 
-		//#pragma omp task
-		quickSort(dataset, low, pivot-1);
+		#pragma omp sections
+		{
+			#pragma omp section
+			quickSort(dataset, low, pivot-1);
 
-		//#pragma omp task
-		quickSort(dataset, pivot+1, high);
+			#pragma omp section
+			quickSort(dataset, pivot+1, high);
+		}
 	}
 }
 
