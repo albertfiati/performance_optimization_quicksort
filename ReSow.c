@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 	
 	if(ALG==QUICKSORT){
 		printf(">* Performing quick sort\n");
-		quickSort(dataset, 0, SIZE-1);
+		quickSort(dataset, 0, SIZE);
 	}else{
 		printf(">* Performing insertion sort\n");
 		insertionSort(dataset, SIZE);
@@ -222,7 +222,7 @@ int partition(float *dataset, int low, int high){
 
 void quickSort(float *dataset, int low, int high){
 	if(low < high){
-		int pivot = partition(dataset, 0, high);
+		int pivot = partition(dataset, low, high);
 		quickSort(dataset, low, pivot-1);
 		quickSort(dataset, pivot+1, high);
 	}
