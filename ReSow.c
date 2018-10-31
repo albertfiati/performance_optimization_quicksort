@@ -60,12 +60,14 @@ int main(int argc, char *argv[]) {
 	writeDatasetToFile(SIZE, dataset, DESTINATION_FILE);
 
 	printf("\n");
+	return 0;
 }
 
 float getAverage(float *dataset, int size){
 	float total = 0.0;
+	int i;
 
-	for (int i = 0; i < size; i++)
+	for (i = 0; i < size; i++)
 	{
 		total+=dataset[i];
 	}
