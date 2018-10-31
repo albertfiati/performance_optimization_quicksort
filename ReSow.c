@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 	
 	if(ALG==QUICKSORT){
 		printf(">* Performing quick sort\n");
-		quickSort(dataset, 0, SIZE);
+		quickSort(dataset, 0, SIZE-1);
 	}else{
 		printf(">* Performing insertion sort\n");
 		insertionSort(dataset, SIZE);
