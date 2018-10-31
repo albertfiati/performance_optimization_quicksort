@@ -3,7 +3,6 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
-//#include <omp.h>
 
 #define SOURCE_FILE "sourceList.data"
 #define DESTINATION_FILE "sortedList.data"
@@ -14,9 +13,6 @@
 #define INSERTIONSORT 2
 #define GENERATE 1
 #define FROMFILE 2
-
-//Input: DataSetSize, BufferSize, DatasetFilename, OutputFilename
-//Output: the file OutputFilename containing the sorted dataset.
 
 void loadDataFromFileToMemory(float *buffer, char *filename, int noOfItems);
 int writeDatasetToFile(int datasetSize, float *dataset, char *filename);
@@ -63,13 +59,15 @@ int main(int argc, char *argv[]) {
 	if(ALG==QUICKSORT){
 		printf(">* Performing quick sort\n");
 		
-		//#pragma omp parallel
-		//{
-			//#pragma omp single
-			//{
+		#pragma omp parallel
+		{
+			#pragma omp single
+			{
 				quickSort(dataset, 0, SIZE-1);
-			//}
-		//}
+			}
+		}
+
+		#pragma omp barrier
 	}else{
 		printf(">* Performing insertion sort\n");
 		insertionSort(dataset, SIZE);
