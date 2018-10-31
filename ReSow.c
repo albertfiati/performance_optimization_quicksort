@@ -15,7 +15,6 @@
 #define GENERATE 1
 #define FROMFILE 2
 
-
 //Input: DataSetSize, BufferSize, DatasetFilename, OutputFilename
 //Output: the file OutputFilename containing the sorted dataset.
 
@@ -64,13 +63,13 @@ int main(int argc, char *argv[]) {
 	if(ALG==QUICKSORT){
 		printf(">* Performing quick sort\n");
 		
-		#pragma omp parallel
-		{
-			#pragma omp single
-			{
+		//#pragma omp parallel
+		//{
+			//#pragma omp single
+			//{
 				quickSort(dataset, 0, SIZE-1);
-			}
-		}
+			//}
+		//}
 	}else{
 		printf(">* Performing insertion sort\n");
 		insertionSort(dataset, SIZE);
@@ -232,10 +231,10 @@ void quickSort(float *dataset, int low, int high){
 	if(low < high){
 		int pivot = partition(dataset, low, high);
 
-		#pragma omp task
+		//#pragma omp task
 		quickSort(dataset, low, pivot-1);
 
-		#pragma omp task
+		//#pragma omp task
 		quickSort(dataset, pivot+1, high);
 	}
 }
