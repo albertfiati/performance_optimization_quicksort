@@ -30,7 +30,7 @@ void swap(float *a, float *b);
 void printHelpText();
 void blankline();
 
-int i, SIZE = 102400, ALG = 2, DATA_SOURCE = 1, PRINT_LIST = 1;
+int i, BUFFER_SIZE = 128, SIZE = 102400, ALG = 2, DATA_SOURCE = 1, PRINT_LIST = 1;
 
 int main(int argc, char *argv[]) {
 	readOptions(&argc, argv);
@@ -61,16 +61,7 @@ int main(int argc, char *argv[]) {
 	
 	if(ALG==QUICKSORT){
 		printf(">* Performing quick sort\n");
-		
-		//#pragma omp parallel
-		//{
-			//#pragma omp single
-			//{
-				quickSort(dataset, 0, SIZE-1);
-			//}
-		//}
-
-		//#pragma omp barrier
+		quickSort(dataset, 0, SIZE-1);
 	}else{
 		printf(">* Performing insertion sort\n");
 		insertionSort(dataset, SIZE);
@@ -92,13 +83,16 @@ int main(int argc, char *argv[]) {
 void readOptions(int *argc, char **argv){
 	int option;
 
-	while ((option = getopt (*argc, argv, "hn:a:d:p:")) != -1){
+	while ((option = getopt (*argc, argv, "hn:a:d:p:b:")) != -1){
 		switch(option){
 			case 'h':
 				printHelpText();
 				break;
 			case 'n':
 				SIZE = atoi(optarg);
+				break;
+			case 'b':
+				BUFFER_SIZE = atoi(optarg);
 				break;
 			case 'a':
 				ALG = atoi(optarg);
@@ -123,6 +117,7 @@ void printHelpText(){
 	printf("  -p [ 1 | 2 ]	\t Prints the list. Options include [1 = print list, 2 = do not print list]. Default is 1\n");
 	printf("  -a [ 1 | 2 ]	\t Define the sorting algorithm to use. Options include [1 = QUICKSORT, 2 = INSERTIONSORT]. Default is 2\n");
 	printf("  -n <size>		 Indicates the size of the dataset to be used. Default is 102400\n");
+	printf("  -b <size>		 Indicates the size of the buffer to be used. Default is 128\n");
 	printf("\n");
 	exit(3);
 }
@@ -186,7 +181,7 @@ int writeDatasetToFile(int datasetSize, float *dataset, char *filename){
 		exit(0);
 	}
 	
-	fwrite(dataset, sizeof(float), datasetSize, fp);
+	fwrite(dataset, BUFFER_SIZE, datasetSize, fp);
 	fclose(fp);
 
 	return 0;
@@ -202,7 +197,7 @@ void loadDataFromFileToMemory(float *buffer, char *filename, int noOfItems){
 	}
 
 	fseek(fp, 0, SEEK_SET);
-	fread(buffer, sizeof(float), noOfItems, fp);
+	fread(buffer, BUFFER_SIZE, noOfItems, fp);
 	fclose(fp);
 }
 
@@ -234,15 +229,8 @@ int partition(float *dataset, int low, int high){
 void quickSort(float *dataset, int low, int high){
 	if(low < high){
 		int pivot = partition(dataset, low, high);
-
-		#pragma omp sections
-		{
-			#pragma omp section
-			quickSort(dataset, low, pivot-1);
-
-			#pragma omp section
-			quickSort(dataset, pivot+1, high);
-		}
+		quickSort(dataset, low, pivot-1);
+		quickSort(dataset, pivot+1, high);
 	}
 }
 
