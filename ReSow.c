@@ -26,7 +26,7 @@ void printHelpText();
 void blankline();
 
 int DATA_SOURCE = 1;
-int SIZE = 1024000;
+int SIZE = 102400;
 int PRINT_LIST = 0;
 int i;
 
@@ -97,7 +97,6 @@ void printHelpText(){
 	printf("  -d [ 1 | 2 ]	\t Set data source for the operation. Options include [1 = generate new dataset, 2 = load dataset from file]. Default is 1\n");
 	printf("  -p [ 1 | 2 ]	\t Prints the list. Options include [1 = print list, 2 = do not print list]. Default is 1\n");
 	printf("  -n <size>		 Indicates the size of the dataset to be used. Default is 102400\n");
-	printf("  -b <size>		 Indicates the size of the buffer to be used. Default is 128\n");
 	printf("\n");
 	exit(3);
 }
