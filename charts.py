@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np 
 
 def main():
-	#scenario1()
-	#scenario2()
+	scenario1()
+	scenario2()
 	optimizations()
 
 # solver for question 1
