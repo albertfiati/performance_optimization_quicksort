@@ -3,7 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
-//#include <omp.h>
+#include <omp.h>
 
 #define SOURCE_FILE "sourceList.data"
 #define DESTINATION_FILE "sortedList.data"
@@ -31,7 +31,7 @@ void printHelpText();
 void blankline();
 
 int DATA_SOURCE = 1;
-int SIZE = 1024000;
+int SIZE = 102400;
 int PRINT_LIST = 0;
 int ALG = 2;
 int i;
@@ -210,7 +210,7 @@ int partition(float *dataset, int low, int high){
 
 	i = (low-1);
 
-	//#pragma omp parallel for
+	#pragma omp parallel for
 	for(j = low; j <= high-1; j++){
 		if(dataset[j] <= pivot){
 			i++;
